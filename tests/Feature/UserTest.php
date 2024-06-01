@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
+use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -41,7 +43,7 @@ class UserTest extends TestCase
 
     public function testRegisterUsernameAlreadyExist()
     {
-        $this->testRegisterSuccess();
+        $this->seed([UserSeeder::class]);
         $this->post('/api/users', [
             "username" => "Tian",
             "password" => "r4h4s!a",
@@ -51,6 +53,59 @@ class UserTest extends TestCase
                 "errors" => [
                     "username" => [
                         "username already registered"
+                    ]
+                ]
+            ]);
+    }
+
+    public function testLoginSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->post('/api/users/login', [
+            "username" => "Tian",
+            "password" => "r4h4s!a"
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "username" => "Tian",
+                    "name" => "Christian",
+                ]
+            ]);
+
+        $user = User::where("username", "Tian")->first();
+        self::assertNotNull($user->token);
+    }
+
+    public function testLoginUsernameNotFound()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->post('/api/users/login', [
+            "username" => "Rawr",
+            "password" => "r4h4s!a"
+        ])->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "username or password wrong"
+                    ]
+                ]
+            ]);
+    }
+
+    public function testLoginWrongPassword()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->post('/api/users/login', [
+            "username" => "Tian",
+            "password" => "gatau"
+        ])->assertStatus(401)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "username or password wrong"
                     ]
                 ]
             ]);
