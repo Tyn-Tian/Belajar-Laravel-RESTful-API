@@ -35,5 +35,6 @@ Route::middleware(ApiAuthMiddleware::class)->group(function () {
         Route::post('', 'create');
         Route::get('/{id}', 'get')->where('id', '[0-9]+');
         Route::put('/{id}', 'update')->where('id', '[0-9]+');
+        Route::delete('/{id}', 'delete')->where('id', '[0-9]+');
     });
 });
