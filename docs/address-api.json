@@ -1,63 +1,40 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "Contact API",
-        "description": "Contact API",
+        "title": "Address API",
+        "description": "Address API",
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://localhost:8000"
-        }
-    ],
+    "servers": [{ "url": "http://localhost:8000" }],
     "paths": {
-        "/api/contacts": {
+        "/api/contacts/{idContact}/addresses": {
             "post": {
-                "description": "Create new contact",
+                "description": "Create new address",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idContact"
                     }
                 ],
                 "requestBody": {
-                    "description": "Create new contact",
+                    "description": "Create new address",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/contact_request"
+                                "$ref": "#/components/schemas/addressRequest"
                             }
                         }
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Success create contact",
+                    "201": {
+                        "description": "Success create address",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "first_name": {
-                                                    "type": "string"
-                                                },
-                                                "last_name": {
-                                                    "type": "string"
-                                                },
-                                                "email": {
-                                                    "type": "string"
-                                                },
-                                                "phone": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        },
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    }
+                                    "$ref": "#/components/schemas/address"
                                 }
                             }
                         }
@@ -65,40 +42,18 @@
                 }
             },
             "get": {
-                "description": "Search contact",
+                "description": "Get list address",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/authorization"
                     },
                     {
-                        "name": "name",
-                        "in": "query",
-                        "schema": {}
-                    },
-                    {
-                        "name": "phone",
-                        "in": "query",
-                        "schema": {}
-                    }, 
-                    {
-                        "name": "email",
-                        "in": "query",
-                        "schema": {}
-                    },
-                    {
-                        "name": "size",
-                        "in": "query",
-                        "schema": {}
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "schema": {}
+                        "$ref": "#/components/parameters/idContact"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success search contact",
+                        "description": "List addresses",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -109,25 +64,25 @@
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                    "first_name": {
+                                                    "street": {
                                                         "type": "string"
                                                     },
-                                                    "last_name": {
+                                                    "city": {
                                                         "type": "string"
                                                     },
-                                                    "email": {
+                                                    "province": {
                                                         "type": "string"
                                                     },
-                                                    "phone": {
+                                                    "country": {
+                                                        "type": "string"
+                                                    },
+                                                    "postal_code": {
                                                         "type": "string"
                                                     }
                                                 }
                                             }
                                         },
                                         "errors": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
                                             "type": "object"
                                         }
                                     }
@@ -138,57 +93,88 @@
                 }
             }
         },
-        "/api/contacts/{id}": {
-            "put": {
-                "description": "Update contact",
+        "/api/contacts/{idContact}/addresses/{idAddress}": {
+            "get": {
+                "description": "Get address",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/authorization"
                     },
                     {
-                        "$ref": "#/components/parameters/contact_id"
+                        "$ref": "#/components/parameters/idContact"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idAddress"
                     }
                 ],
-                "requestBody": {
-                    "description": "Update contact",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/contact_request"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
-                        "description": "Success update contact",
+                        "description": "Success get address",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/contact_response"
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "number"
+                                                },
+                                                "street": {
+                                                    "type": "string"
+                                                },
+                                                "city": {
+                                                    "type": "string"
+                                                },
+                                                "province": {
+                                                    "type": "string"
+                                                },
+                                                "country": {
+                                                    "type": "string"
+                                                },
+                                                "postal_code": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             },
-            "get": {
-                "description": "Get contact",
+            "put": {
+                "description": "Update address",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/authorization"
                     },
                     {
-                        "$ref": "#/components/parameters/contact_id"
+                        "$ref": "#/components/parameters/idContact"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idAddress"
                     }
                 ],
+                "requestBody": {
+                    "description": "Update existing contact address",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/addressRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Success get contact",
+                        "description": "Success update address",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/contact_response"
+                                    "$ref": "#/components/schemas/address"
                                 }
                             }
                         }
@@ -196,18 +182,21 @@
                 }
             },
             "delete": {
-                "description": "Delete contact",
+                "description": "Delete address",
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/authorization"
                     },
                     {
-                        "$ref": "#/components/parameters/contact_id"
+                        "$ref": "#/components/parameters/idContact"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idAddress"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success delete contact",
+                        "description": "Success delete address",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -235,53 +224,65 @@
                 "in": "header",
                 "schema": {}
             },
-            "contact_id": {
-                "name": "id",
+            "idContact": {
+                "name": "idContact",
+                "in": "path",
+                "schema": {},
+                "required": true
+            },
+            "idAddress": {
+                "name": "idAddress",
                 "in": "path",
                 "schema": {},
                 "required": true
             }
         },
         "schemas": {
-            "contact_request": {
-                "type": "object",
-                "properties": {
-                    "first_name": {
-                        "type": "string"
-                    },
-                    "last_name": {
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    },
-                    "phone": {
-                        "type": "string"
-                    }
-                }
-            },
-            "contact_response": {
+            "address": {
                 "type": "object",
                 "properties": {
                     "data": {
                         "type": "object",
                         "properties": {
-                            "first_name": {
+                            "id": {
+                                "type": "number"
+                            },
+                            "street": {
                                 "type": "string"
                             },
-                            "last_name": {
+                            "city": {
                                 "type": "string"
                             },
-                            "email": {
+                            "province": {
                                 "type": "string"
                             },
-                            "phone": {
+                            "country": {
+                                "type": "string"
+                            },
+                            "postal_code": {
                                 "type": "string"
                             }
                         }
+                    }
+                }
+            },
+            "addressRequest": {
+                "type": "object",
+                "properties": {
+                    "street": {
+                        "type": "string"
                     },
-                    "errors": {
-                        "type": "object"
+                    "city": {
+                        "type": "string"
+                    },
+                    "province": {
+                        "type": "string"
+                    },
+                    "country": {
+                        "type": "string"
+                    },
+                    "postal_code": {
+                        "type": "string"
                     }
                 }
             }
