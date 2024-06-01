@@ -80,4 +80,15 @@ class UserController extends Controller
         $user->save(); // Code error tetapi berfungsi dengan baik di IDE saya (mungkin Intelephense Issue)
         return new UserResource($user);
     }
+
+    public function logout(Request $request): JsonResponse
+    {
+        $user = Auth::user();
+        $user->token = null;
+        $user->save(); // Code error tetapi berfungsi dengan baik di IDE saya (mungkin Intelephense Issue)
+
+        return response()->json([
+            "data" => true
+        ])->setStatusCode(200);
+    }
 }
