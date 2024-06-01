@@ -156,4 +156,72 @@ class UserTest extends TestCase
                 ]
             ]);
     }
+
+    public function testUpdateNameSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+        $oldUser = User::where("username", "Tian")->first();
+
+        $this->patch(
+            '/api/users/current',
+            [
+                "name" => "Updated"
+            ],
+            ["Authorization" => "token"]
+        )->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "username" => "Tian",
+                    "name" => "Updated"
+                ]
+            ]);
+
+        $newUser = User::where("username", "Tian")->first();
+        self::assertNotEquals($oldUser->name, $newUser->name);
+    }
+
+    public function testUpdatePasswordSuccess()
+    {
+        $this->seed([UserSeeder::class]);
+        $oldUser = User::where("username", "Tian")->first();
+
+        $this->patch(
+            '/api/users/current',
+            [
+                "password" => "Upd4te*"
+            ],
+            ["Authorization" => "token"]
+        )->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "username" => "Tian",
+                    "name" => "Christian"
+                ]
+            ]);
+
+        $newUser = User::where("username", "Tian")->first();
+        self::assertNotEquals($oldUser->password, $newUser->password);
+    }
+
+    public function testUpdateFailed()
+    {
+        $this->seed([UserSeeder::class]);
+
+        $this->patch(
+            '/api/users/current',
+            [
+                "password" => "gatau"
+            ],
+            ["Authorization" => "token"]
+        )->assertStatus(400)
+            ->assertJson([
+                "errors" => [
+                    "password" => [
+                        "The password field must be at least 6 characters.",
+                        "The password field must contain at least one symbol.",
+                        "The password field must contain at least one number."
+                    ]
+                ]
+            ]);
+    }
 }
