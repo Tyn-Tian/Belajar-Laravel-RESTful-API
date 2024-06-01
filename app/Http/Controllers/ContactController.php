@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactCreateRequest;
+use App\Http\Requests\ContactUpdateRequest;
 use App\Http\Resources\ContactResource;
 use App\Models\Contact;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
@@ -28,7 +28,6 @@ class ContactController extends Controller
     {
         $user = Auth::user();
         $contact = Contact::where("id", $id)->where("user_id", $user->id)->first();
-
         if (!$contact) {
             throw new HttpResponseException(response()->json([
                 "errors" => [
@@ -38,6 +37,27 @@ class ContactController extends Controller
                 ]
             ], 404));
         }
+
+        return new ContactResource($contact);
+    }
+
+    public function update(int $id, ContactUpdateRequest $request): ContactResource
+    {
+        $user = Auth::user();
+        $contact = Contact::where("id", $id)->where("user_id", $user->id)->first();
+        if (!$contact) {
+            throw new HttpResponseException(response()->json([
+                "errors" => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ], 404));
+        }
+
+        $data = $request->validated();
+        $contact->fill($data);
+        $contact->save();
 
         return new ContactResource($contact);
     }
