@@ -42,5 +42,6 @@ Route::middleware(ApiAuthMiddleware::class)->group(function () {
 
     Route::prefix('/contacts/{idContact}/addresses')->controller(AddressController::class)->group(function () {
         Route::post('', 'create');
+        Route::get('/{idAddress}', 'get')->where('idAddress', '[0-9]+');
     })->where('idContact', '[0-9]+');
 });
