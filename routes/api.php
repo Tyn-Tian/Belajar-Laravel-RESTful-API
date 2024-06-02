@@ -42,6 +42,7 @@ Route::middleware(ApiAuthMiddleware::class)->group(function () {
 
     Route::prefix('/contacts/{idContact}/addresses')->controller(AddressController::class)->group(function () {
         Route::post('', 'create');
+        Route::get('', 'list');
         Route::get('/{idAddress}', 'get')->where('idAddress', '[0-9]+');
         Route::put('/{idAddress}', 'update')->where('idAddress', '[0-9]+');
         Route::delete('/{idAddress}', 'delete')->where('idAddress', '[0-9]+');

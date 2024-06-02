@@ -198,7 +198,7 @@ class AddressTest extends TestCase
             ->assertJson([
                 "data" => true
             ]);
-    }   
+    }
 
     public function testDeleteNotFound()
     {
@@ -206,6 +206,44 @@ class AddressTest extends TestCase
         $address = Address::query()->limit(1)->first();
 
         $this->delete(uri: '/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id + 1), headers: [
+            "Authorization" => "token"
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ]);
+    }
+
+    public function testListSuccess()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->get('/api/contacts/' . $contact->id . '/addresses', [
+            "Authorization" => "token"
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    [
+                        "street" => "Jl. Kambing Merah",
+                        "city" => "Pangkalpinang",
+                        "province" => "Pangkalpinang",
+                        "country" => "Indonesia",
+                        "postal_code" => "3636",
+                    ]
+                ]
+            ]);
+    }
+
+    public function testListContactNotFound()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $contact = Contact::query()->limit(1)->first();
+
+        $this->get('/api/contacts/' . ($contact->id + 1) . '/addresses', [
             "Authorization" => "token"
         ])->assertStatus(404)
             ->assertJson([
