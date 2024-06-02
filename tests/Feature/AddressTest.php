@@ -115,4 +115,75 @@ class AddressTest extends TestCase
                 ]
             ]);
     }
+
+    public function testUpdateSuccess()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $address = Address::query()->limit(1)->first();
+
+        $this->put('/api/contacts/' . $address->contact_id . '/addresses/' . $address->id, [
+            "street" => "Update",
+            "city" => "Update",
+            "province" => "Update",
+            "country" => "Update",
+            "postal_code" => "3636",
+        ], [
+            "Authorization" => "token"
+        ])->assertStatus(200)
+            ->assertJson([
+                "data" => [
+                    "street" => "Update",
+                    "city" => "Update",
+                    "province" => "Update",
+                    "country" => "Update",
+                    "postal_code" => "3636",
+                ]
+            ]);
+    }
+
+    public function testUpdateFailed()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $address = Address::query()->limit(1)->first();
+
+        $this->put('/api/contacts/' . $address->contact_id . '/addresses/' . $address->id, [
+            "street" => "Update",
+            "city" => "Update",
+            "province" => "Update",
+            "country" => "",
+            "postal_code" => "3636",
+        ], [
+            "Authorization" => "token"
+        ])->assertStatus(400)
+            ->assertJson([
+                "errors" => [
+                    "country" => [
+                        "The country field is required."
+                    ]
+                ]
+            ]);
+    }
+
+    public function testUpdateNotFound()
+    {
+        $this->seed([UserSeeder::class, ContactSeeder::class, AddressSeeder::class]);
+        $address = Address::query()->limit(1)->first();
+
+        $this->put('/api/contacts/' . $address->contact_id . '/addresses/' . ($address->id + 1), [
+            "street" => "Update",
+            "city" => "Update",
+            "province" => "Update",
+            "country" => "Update",
+            "postal_code" => "3636",
+        ], [
+            "Authorization" => "token"
+        ])->assertStatus(404)
+            ->assertJson([
+                "errors" => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ]);
+    }
 }
